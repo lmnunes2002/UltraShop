@@ -22,3 +22,58 @@ body {
     font-family:Verdana, Geneva, Tahoma, sans-serif;
     letter-spacing: 1.5px; 
 }
+
+/* Inverto o toggle preto em branco */
+.navbar-toggler-icon {
+    filter: invert(1); 
+}
+
+/* Ajusta a borda do toggle do botão para combinar */
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Container principal do footer */
+footer {
+    background-color: #1a1a1a;
+    border-top: 3px solid #5a008a; 
+}
+
+/* Títulos das colunas */
+footer h4 {
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+}
+
+/* Estilo geral dos links do footer */
+footer a {
+    color: rgba(255, 255, 255, 0.6); 
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block; 
+}
+
+/* Efeito de Hover: cor brilha e o link "anda" para a direita */
+footer a:hover {
+    color: #ffffff;
+    transform: translateX(5px);
+}
+
+footer h3, footer h4 {
+    font-family: 'Poppins', sans-serif; 
+    font-weight: 400;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+/* Ícones de Redes Sociais (Efeito de pulsação) */
+.social-icon i {
+    color: #ffffff;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.social-icon:hover i {
+    color: #5a008a; 
+    transform: scale(1.2) rotate(10deg); 
+}
