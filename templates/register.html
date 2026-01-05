@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row m-0">
+        <div class="col-md-5 col-lg-6">
+            <div class="content-section shadow p-4 rounded bg-white">
+                <form method="POST" action="" novalidate>
+                    {{ form.hidden_tag() }}
+                    <fieldset class="form-group mb-4">
+                        <legend class="border-bottom mb-4">Cadastro</legend>
+
+                        <div class="form-group">
+                            {{ form.username.label(class="form-control-label") }}
+
+                            {% if form.username.errors %}
+                                {{ form.username(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.username.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.username(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            {{ form.email.label(class="form-control-label") }}
+
+                            {% if form.email.errors %}
+                                {{ form.email(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.email(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.password.label(class="form-control-label") }}
+
+                            {% if form.password.errors %}
+                                {{ form.password(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.password.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.password(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.password_confirm.label(class="form-control-label") }}
+                            
+                            {% if form.password_confirm.errors %}
+                                {{ form.password_confirm(class="form-control form-control-lg is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.password_confirm.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.password_confirm(class="form-control form-control-lg") }}
+                            {% endif %}
+                        </div> 
+                    </fieldset>
+
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+                </form>
+
+                <div>
+                    <p class="text-muted">
+                        Já possui uma conta? <a href="{{ url_for('login') }}">Faça o login</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

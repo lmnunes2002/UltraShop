@@ -1,5 +1,8 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, flash, redirect, url_for
+from forms import RegistrationForm, LoginForm
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = 'e6dc8ff8d1fa2d2df0a2b278a3646ec4'
 
 products = [
     {
@@ -27,13 +30,24 @@ def home():
 def about():
     return render_template('about.html', title='Sobre nós')
 
-@app.route('/login')
-def login():
-    return "Seja bem-vindo ao login"
-
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    return "Seja bem-vindo ao registro"
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        flash(f'Conta criada para {form.username.data}!', 'success')
+        return redirect(url_for('home'))
+    return render_template('register.html', title='Cadastro', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        if form.login.data == 'Lucas' or 'lukasnunes09@gmail.com' and form.password.data == '123456':
+            flash(f'Você está logado em {form.login.data}!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash(f'Login inválido. Por favor, verifique sua credencial e senha.', 'danger')
+    return render_template('login.html', title='Login', form=form)
 
 if __name__ == '__main__':
     app.run(debug=True)

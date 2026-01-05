@@ -1,6 +1,7 @@
 body {
     background-color: #f4f7f6;
-    font-family: 'Segoe UI'
+    font-family: 'Segoe UI';
+    padding-top: 80px;
 }
 
 .navbar.navbar-custom {
@@ -33,6 +34,18 @@ body {
     border-color: rgba(255, 255, 255, 0.5);
 }
 
+.main-content {
+    margin-top: 20px; 
+    margin-bottom: 20px;
+}
+
+.content-section {
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 /* Container principal do footer */
 footer {
     background-color: #1a1a1a;
@@ -61,7 +74,7 @@ footer a:hover {
 }
 
 footer h3, footer h4 {
-    font-family: 'Poppins', sans-serif; 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     font-weight: 400;
     color: #ffffff;
     margin-bottom: 1rem;
