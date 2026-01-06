@@ -2,7 +2,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 
+# Formulário de Registro de Usuário.
 class RegistrationForm(FlaskForm):
+    # Campos com validações
     username = StringField('Nome de Usuário', 
         validators=[DataRequired(message="O nome de usuário é obrigatório."),
         Length(min=2, max=50, message="O nome deve ter entre 2 e 50 caracteres.")]
@@ -25,7 +27,9 @@ class RegistrationForm(FlaskForm):
 
     submit = SubmitField('Registrar')
 
+# Formulário de Login de Usuário.
 class LoginForm(FlaskForm):
+    # Campos com validações
     login = StringField('E-mail ou Usuário',
         validators=[DataRequired(message="Por favor, insira seu e-mail ou nome de usuário.")]
     )
