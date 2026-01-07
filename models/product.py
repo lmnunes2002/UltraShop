@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from app.connection import Base
+from infra.connection import Base
 
 class Product(Base):
     __tablename__ = 'products'
@@ -25,4 +25,4 @@ class Product(Base):
 
     # Metódo mágico para representar e debugar
     def __repr__(self):
-        return f'({self.name} - {self.price} - {self.img_file} - {self.author})'
+        return f'({self.name} - {self.price} - {self.img_file} - {self.user_id})'
