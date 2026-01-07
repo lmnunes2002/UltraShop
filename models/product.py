@@ -7,7 +7,6 @@ class Product(Base):
     __tablename__ = 'products'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    author = Column(String(50), unique=True, nullable=False)
     name = Column(String(100), unique=True, nullable=False)
     description = Column(String(500), nullable=False)
     price = Column(Float, nullable=False)

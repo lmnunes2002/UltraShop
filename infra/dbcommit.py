@@ -34,7 +34,6 @@ while True:
                 img_file = input('Digite o nome do arquivo de imagem do produto: ').strip() or 'product_default.jpg'
 
                 product = Product(
-                    author=username,
                     name=product_name,
                     description=description,
                     price=price,
@@ -45,7 +44,7 @@ while True:
                 # PARTE 5: Add e Commit product
                 db.add(product)
                 db.commit()
-                print(f'Produto {product_name} criado para o usuário {username} com sucesso!')
+                print(f'Produto {product_name} criado para o usuário {user} com sucesso!')
             else:
                 break
 
