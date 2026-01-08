@@ -1,4 +1,4 @@
-from models.user import User
+from flaskblog.models.user import User
 from sqlalchemy.orm import Session
 from typing import List, Optional
 

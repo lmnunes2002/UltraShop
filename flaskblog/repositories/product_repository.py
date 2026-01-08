@@ -1,5 +1,5 @@
+from flaskblog.models.product import Product
 from sqlalchemy.orm import Session
-from models.product import Product
 from typing import List, Optional
 
 class ProductRepository:

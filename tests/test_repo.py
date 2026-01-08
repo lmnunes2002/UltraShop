@@ -1,7 +1,7 @@
-from repositories.user_repository import UserRepository
-from repositories.product_repository import ProductRepository
-from infra.connection import Base, SessionLocal, engine
-from models.user import User
+from flaskblog.repositories.user_repository import UserRepository
+from flaskblog.repositories.product_repository import ProductRepository
+from flaskblog.infra.connection import Base, SessionLocal, engine
+from flaskblog.models.user import User
 
 session = SessionLocal(bind=engine)
 user_repo = UserRepository(session)

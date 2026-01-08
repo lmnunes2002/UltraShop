@@ -1,7 +1,7 @@
+from flaskblog.infra.connection import Base
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from infra.connection import Base
 
 class Product(Base):
     __tablename__ = 'products'

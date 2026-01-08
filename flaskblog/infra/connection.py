@@ -1,6 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
+# Cria o objeto Base para os modelos herdarem
+Base = declarative_base()
+
 # Definição da URL de conexão com o banco de dados SQLite
 DATABASE_URL = 'sqlite:///site.db'
 
@@ -9,13 +12,10 @@ DATABASE_URL = 'sqlite:///site.db'
 # Habilita logging de SQL para debug
 # Necessário para SQLite com múltiplas threads
 engine = create_engine(
-    'sqlite:///site.db',    
+    DATABASE_URL,    
     echo=True,              
     connect_args={"check_same_thread": False}
 )
-
-# Cria o objeto Base para os modelos herdarem
-Base = declarative_base()
 
 # Cria uma sessão configurada para interagir com o banco de dados
 SessionLocal = sessionmaker(bind=engine)

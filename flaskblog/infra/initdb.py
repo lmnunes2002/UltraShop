@@ -1,6 +1,6 @@
-from infra.connection import engine, Base
-from models.user import User
-from models.product import Product
+from flaskblog.infra.connection import engine, Base
+from flaskblog.models.user import User
+from flaskblog.models.product import Product
 
 # Só rodar uma vez!!!
 def create_database():

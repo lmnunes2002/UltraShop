@@ -1,7 +1,7 @@
 # PARTE 1: Importar a Base e a Sessão
-from models.user import User 
-from models.product import Product 
-from infra.connection import SessionLocal
+from flaskblog.infra.connection import SessionLocal
+from flaskblog.models.user import User 
+from flaskblog.models.product import Product 
 
 # PARTE 2: Criar a sessão (instanciar o db)
 db = SessionLocal()

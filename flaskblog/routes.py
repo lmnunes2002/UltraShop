@@ -1,8 +1,6 @@
-from flask import Flask, render_template, flash, redirect, url_for
-from forms import RegistrationForm, LoginForm
-app = Flask(__name__)
-
-app.config['SECRET_KEY'] = 'e6dc8ff8d1fa2d2df0a2b278a3646ec4'
+from flask import render_template, flash, redirect, url_for
+from flaskblog import app
+from flaskblog.forms import RegistrationForm, LoginForm
 
 products = [
     {
@@ -48,6 +46,3 @@ def login():
         else:
             flash(f'Login inválido. Por favor, verifique sua credencial e senha.', 'danger')
     return render_template('login.html', title='Login', form=form)
-
-if __name__ == '__main__':
-    app.run(debug=True)
