@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 
 # Cria o objeto Base para os modelos herdarem
 Base = declarative_base()
@@ -18,4 +18,6 @@ engine = create_engine(
 )
 
 # Cria uma sessão configurada para interagir com o banco de dados
-SessionLocal = sessionmaker(bind=engine)
+session_factory = sessionmaker(bind=engine)
+
+db = scoped_session(session_factory)

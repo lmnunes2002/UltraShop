@@ -1,6 +1,8 @@
 from flask import render_template, flash, redirect, url_for
-from flaskblog import app
+from flaskblog import app, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm
+from flaskblog.models import User, Product
+from flaskblog.infra.connection import db
 
 products = [
     {
@@ -32,15 +34,19 @@ def about():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Conta criada para {form.username.data}!', 'success')
-        return redirect(url_for('home'))
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.add(user)
+        db.commit()
+        flash(f'Sua conta foi criada com sucesso, faça o login!', 'success')
+        return redirect(url_for('login'))
     return render_template('register.html', title='Cadastro', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        if form.login.data == 'Lucas' or 'lukasnunes09@gmail.com' and form.password.data == '123456':
+        if (form.login.data == 'Lucas' or form.login.data == 'lucas@demo.com') and form.password.data == '123456':
             flash(f'Você está logado em {form.login.data}!', 'success')
             return redirect(url_for('home'))
         else:
