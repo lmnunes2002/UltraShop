@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from flaskblog.models import User
 
 # Formulário de Registro de Usuário.
 class RegistrationForm(FlaskForm):
@@ -26,6 +27,19 @@ class RegistrationForm(FlaskForm):
     )
 
     submit = SubmitField('Registrar')
+
+    # Templates de validação personalizada.
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+
+        if user:
+            raise ValidationError('Este nome de usuário já está em uso. Por favor, escolha outro.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(username=email.data).first()
+
+        if user:
+            raise ValidationError('Este e-mail já está em uso. Por favor, escolha outro.')            
 
 # Formulário de Login de Usuário.
 class LoginForm(FlaskForm):

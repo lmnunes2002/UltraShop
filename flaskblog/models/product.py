@@ -2,6 +2,7 @@ from flaskblog.infra.connection import Base
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from datetime import datetime
 
 class Product(Base):
     __tablename__ = 'products'
@@ -19,8 +20,8 @@ class Product(Base):
     user = relationship('User', back_populates='products')
 
     # Timestamps
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
-    time_updated = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())
+    time_created = Column(DateTime(timezone=True), default=datetime.now)
+    time_updated = Column(DateTime(timezone=True), onupdate=datetime.now, default=datetime.now)
 
     # Metódo mágico para representar e debugar
     def __repr__(self):

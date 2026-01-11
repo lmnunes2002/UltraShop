@@ -3,6 +3,7 @@ from flaskblog import app, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm
 from flaskblog.models import User, Product
 from flaskblog.infra.connection import db
+from flask_login import login_user, current_user, logout_user, login_required
 
 products = [
     {
@@ -32,6 +33,8 @@ def about():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
@@ -46,9 +49,31 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        if (form.login.data == 'Lucas' or form.login.data == 'lucas@demo.com') and form.password.data == '123456':
-            flash(f'Você está logado em {form.login.data}!', 'success')
+        # Entrada de dados de login.
+        login_data = form.login.data
+
+        # Queries que encontram o usuário pelo e-mail ou nome de usuário.
+        user = db.query(User).filter_by(email=login_data).first()
+
+        if not user:
+            user = db.query(User).filter_by(username=login_data).first()
+
+        # Verificação de existência do usuário e validação da senha.
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user, remember=form.remember.data)
+            flash(f'Login realizado com sucesso! Bem-vindo(a) {user.username}.', 'success')
             return redirect(url_for('home'))
         else:
             flash(f'Login inválido. Por favor, verifique sua credencial e senha.', 'danger')
     return render_template('login.html', title='Login', form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+@app.route('/account')
+@login_required
+def account():
+    return render_template('account.html', title='Sua conta')

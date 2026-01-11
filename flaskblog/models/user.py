@@ -1,9 +1,15 @@
-from flaskblog.infra.connection import Base
+from flaskblog import login_manager
+from flaskblog.infra.connection import Base, db
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
+from flask_login import UserMixin
+from datetime import datetime
 
-class User(Base):
+@login_manager.user_loader
+def load_user(user_id):
+    return db.get(User, int(user_id))
+
+class User(Base, UserMixin):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -13,8 +19,8 @@ class User(Base):
     img_file = Column(String(20), nullable=False, default='default.jpg')
 
     # Timestamps
-    time_created = Column(DateTime(timezone=True), server_default=func.now())
-    time_updated = Column(DateTime(timezone=True), onupdate=func.now(), server_default=func.now())
+    time_created = Column(DateTime(timezone=True), default=datetime.now)
+    time_updated = Column(DateTime(timezone=True), onupdate=datetime.now, default=datetime.now)
 
     # Relação 1 -> N com produtos
     products = relationship(
