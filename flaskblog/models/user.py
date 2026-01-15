@@ -16,7 +16,7 @@ class User(Base, UserMixin):
     username = Column(String(50), unique=True, nullable=False)
     email = Column(String(120), unique=True, nullable=False)
     password = Column(String(60), nullable=False)
-    img_file = Column(String(20), nullable=False, default='default.jpg')
+    image_file = Column(String(20), nullable=False, default='default.jpg')
 
     # Timestamps
     time_created = Column(DateTime(timezone=True), default=datetime.now)
