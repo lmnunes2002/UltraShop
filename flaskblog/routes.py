@@ -2,33 +2,18 @@ import os
 import secrets
 from PIL import Image
 from flask import render_template, flash, redirect, request, url_for
+from flask_login import login_user, current_user, logout_user, login_required
 from flaskblog import app, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, ProductForm
 from flaskblog.models import User, Product
 from flaskblog.repositories import UserRepository, ProductRepository
 from flaskblog.infra.connection import db
-from flask_login import login_user, current_user, logout_user, login_required
-
-products = [
-    {
-        'name': 'Laptop',
-        'price': 999.99,
-        'description': 'Um laptop de alto desempenho adequado para todas as suas necessidades de computação.',
-        'author': 'Joãozinho',
-        'date_posted': '20/08/2024'
-    },
-    {
-        'name': 'Smartphone',
-        'price': 499.99,
-        'description': 'Um smartphone elegante com os recursos mais recentes e uma bela tela.',
-        'author': 'Mariazinha',
-        'date_posted': '15/09/2024'
-    }
-]
 
 @app.route('/')
 @app.route('/home')
 def home():
+    repo = ProductRepository(db)
+    products = repo.list_products()
     return render_template('home.html', products=products)
 
 @app.route('/about')
@@ -43,7 +28,11 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        user = User(
+            username=form.username.data,
+            email=form.email.data,
+            password=hashed_password
+        )
         repo = UserRepository(db)
         repo.add_user(user)
 

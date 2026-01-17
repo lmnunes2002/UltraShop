@@ -39,4 +39,4 @@ class User(Base, UserMixin):
 
     # Metódo mágico para representar e debugar
     def __repr__(self):
-        return f'({self.username} - {self.email} - {self.img_file})'
+        return f'({self.username} - {self.email} - {self.image_file})'
