@@ -25,7 +25,8 @@ class User(Base, UserMixin):
     # Relação 1 -> N com produtos
     products = relationship(
         'Product',
-        back_populates='user',
+        backref='author',
+        lazy=True,
         cascade='all, delete-orphan'
     )
 
