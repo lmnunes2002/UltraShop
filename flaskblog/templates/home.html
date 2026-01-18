@@ -1,23 +1,40 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <h1>Home Page</h1>
-
+<div class="row">
     {% for product in products %}
-        <article class="media content-section shadow p-3 mb-4 rounded bg-white">
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
             
-            <img class="rounded-circle article-img", src="{{ url_for('static', filename='profile_pics/' + product.author.image_file) }}">
-          
-            <div class="media-body">
-                <div class="article-metadata border-bottom mb-2 pb-1">
-                    <a class="mr-2 text-dark font-weight-bold" href="#">{{ product.author.username }}</a>
-                    <small class="text-muted">{{ product.time_created.strftime('%d/%m/%Y') }}</small>
-                </div>
+            <div class="card h-100 shadow-sm border-0 overflow-hidden">
+            
+                <div class="product-img-container">
+                    
+                    <img src="{{ url_for('static', filename='product_pics/' + product.image_file) }}" 
+                         class="card-img-top product-img-main" 
+                         alt="{{ product.name }}">
 
-                <h2 class="h4 mt-2">{{ product.name }}</h2>
-                <p class="text-success font-weight-bold mb-1">Preço: ${{ product.price }}</p>
-                <p class="article-content text-justify">{{ product.description }}</p>
+                    <img src="{{ url_for('static', filename='profile_pics/' + product.author.image_file) }}"
+                         class="rounded-circle shadow-sm border border-dark product-author-overlay">
+                </div>
+                
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                         <h5><a class="card-title mb-0 text-truncate product-title text-decoration-none" href="{{ url_for('product', product_id=product.id) }}">{{ product.name }}</a></h5>
+                         <span class="font-weight-bold text-success">${{ product.price }}</span>
+                    </div>
+                    
+                    <p class="card-text text-muted small text-truncate">
+                        {{ product.description }}
+                    </p> </div>
+                
+                <div class="card-footer bg-white border-0 pt-0 pb-3 pl-3">
+                    <small class="text-muted">
+                        {{ product.time_created.strftime('%d/%m') }} por {{ product.author.username }}
+                    </small>
+                 </div>
             </div>
-        </article>
+
+        </div>
     {% endfor %}
+</div>
 {% endblock content %}

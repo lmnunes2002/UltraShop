@@ -1,7 +1,7 @@
 import os
 import secrets
 from PIL import Image
-from flask import render_template, flash, redirect, request, url_for
+from flask import render_template, flash, redirect, request, url_for, abort
 from flask_login import login_user, current_user, logout_user, login_required
 from flaskblog import app, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, ProductForm
@@ -129,4 +129,59 @@ def new_product():
         repo.add_product(product)
         flash('Produto criado com sucesso!', 'success')
         return redirect(url_for('home'))
-    return render_template('create_product.html', title='Novo Produto', form=form)
+    return render_template('create_product.html', title='Novo Produto', form=form, legend='Novo Produto')
+
+@app.route('/products/<int:product_id>')
+def product(product_id):
+    repo = ProductRepository(db)
+    product = repo.get_product_by_id(product_id)
+
+    if product is None:
+        abort(404)
+
+    return render_template('product.html', title=product.name, product=product)
+
+@app.route('/products/<int:product_id>/update', methods=['GET', 'POST'])
+@login_required
+def update_product(product_id):
+    repo = ProductRepository(db)
+    product = repo.get_product_by_id(product_id)
+
+    if product.author != current_user:
+        abort(403)
+
+    form = ProductForm()
+    if form.validate_on_submit():
+        product.name = form.title.data
+        product.price = form.price.data
+        product.description = form.description.data
+
+        if form.picture.data:
+            product_image_file = save_picture(form.picture.data, 'product_pics')
+            product.image_file = product_image_file
+        elif request.method == 'GET':
+            form.title.data = product.name
+            form.price.data = product.price
+            form.description.data = product.description
+
+        repo.update_product(product)
+        flash('Produto atualizado com sucesso!', 'success')
+        return redirect(url_for('product', product_id=product.id))
+    
+    form.title.data = product.name
+    form.price.data = product.price
+    form.description.data = product.description
+    return render_template('create_product.html', title='Atualizar Produto', form=form, legend='Atualizar Produto')
+
+@app.route('/products/<int:product_id>/delete', methods=['POST'])
+@login_required
+def delete_product(product_id):
+    repo = ProductRepository(db)
+    product = repo.get_product_by_id(product_id)
+
+    if product.author != current_user:
+        abort(403)
+
+    repo.delete_product(product)
+    flash('Produto deletado com sucesso!', 'success')
+    return redirect(url_for('home'))
