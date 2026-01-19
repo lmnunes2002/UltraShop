@@ -1,5 +1,6 @@
 import os
 import secrets
+import math
 from PIL import Image
 from flask import render_template, flash, redirect, request, url_for, abort
 from flask_login import login_user, current_user, logout_user, login_required
@@ -12,9 +13,27 @@ from flaskblog.infra.connection import db
 @app.route('/')
 @app.route('/home')
 def home():
+    # Configura produtos por página.
+    PER_PAGE = 8
+    page = request.args.get('page', 1, type=int)
+
+    # Quantidade de itens à pular antes de paginar.
+    offset = (page - 1) * PER_PAGE
+
+    # Query de produtos.
     repo = ProductRepository(db)
-    products = repo.list_products()
-    return render_template('home.html', products=products)
+    products = repo.list_products(limit=PER_PAGE, offset=offset)
+    total_products = repo.count_products()
+
+    # Divisão arredondada para cima do total de páginas.
+    total_pages = math.ceil(total_products / PER_PAGE)
+
+    return render_template(
+        'home.html',
+        products=products,
+        page=page,
+        total_pages=total_pages
+    )
 
 @app.route('/about')
 def about():
@@ -70,7 +89,7 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-def save_picture(form_picture, folder_path):
+def save_picture(form_picture, folder_path, output_size):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
@@ -79,7 +98,6 @@ def save_picture(form_picture, folder_path):
     form_picture.save(picture_path)
 
     # Ajustando o tamanho da imagem.
-    output_size = (125, 125)
     image = Image.open(form_picture)
     image.thumbnail(output_size)
     image.save(picture_path)
@@ -92,7 +110,7 @@ def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
-            picture_file = save_picture(form.picture.data, 'profile_pics')
+            picture_file = save_picture(form.picture.data, 'profile_pics', (125, 125))
             current_user.image_file = picture_file
 
         current_user.username = form.username.data
@@ -115,7 +133,7 @@ def account():
 def new_product():
     form = ProductForm()
     if form.validate_on_submit():
-        product_image_file = save_picture(form.picture.data, 'product_pics')
+        product_image_file = save_picture(form.picture.data, 'product_pics', (1080, 1080))
 
         product = Product(
             name=form.title.data, 
@@ -157,7 +175,7 @@ def update_product(product_id):
         product.description = form.description.data
 
         if form.picture.data:
-            product_image_file = save_picture(form.picture.data, 'product_pics')
+            product_image_file = save_picture(form.picture.data, 'product_pics', (1080, 1080))
             product.image_file = product_image_file
         elif request.method == 'GET':
             form.title.data = product.name

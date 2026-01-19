@@ -37,4 +37,21 @@
         </div>
     {% endfor %}
 </div>
+
+<div class="pagination">
+    {% if page > 1 %}
+        <a href="{{ url_for('home', page=page-1) }}">Anterior</a>
+    {% endif %}
+
+    {% for p in range(1, total_pages + 1) %}
+        <a href="{{ url_for('home', page=p) }}" 
+           class="btn {{ 'btn-primary' if p == page else 'btn-outline-primary' }} mx-1">
+           {{ p }}
+        </a>
+    {% endfor %}
+
+    {% if page < total_pages %}
+        <a href="{{ url_for('home', page=page+1) }}">Próximo</a>
+    {% endif %}
+</div>
 {% endblock content %}

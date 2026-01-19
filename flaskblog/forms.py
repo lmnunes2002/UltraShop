@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms import DecimalField, StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms.validators import DataRequired, Length, NumberRange, Email, EqualTo, ValidationError
 from flaskblog.models import User
 from flaskblog.infra.connection import db
 
@@ -105,8 +105,9 @@ class ProductForm(FlaskForm):
         Length(min=10, max=500, message='A descrição deve ter entre 10 e 500 caracteres.')]
     )
 
-    price = StringField('Preço do Produto',
-        validators=[DataRequired(message='O preço do produto é obrigatório.')]
+    price = DecimalField('Preço do Produto (R$)',
+        validators=[DataRequired(message='O preço do produto é obrigatório.'),
+        NumberRange(min=0.01, message='O preço deve ser positivo.')]
     )
 
     picture = FileField('Foto do Produto',

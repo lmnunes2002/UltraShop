@@ -1,6 +1,5 @@
 from flaskblog.infra.connection import Base
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
 from datetime import datetime
 
 class Product(Base):

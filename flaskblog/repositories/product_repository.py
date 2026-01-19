@@ -16,8 +16,15 @@ class ProductRepository:
         return product
 
     # Métodos Read
-    def list_products(self) -> List[Product]:
-        return self.session.query(Product).all()
+    def list_products(self, limit: int, offset: int) -> List[Product]:
+        return self.session.query(Product)\
+                    .limit(limit)\
+                    .offset(offset)\
+                    .all()
+
+    # Count: necessário para paginação
+    def count_products(self) -> int:
+        return self.session.query(Product).count()
 
     def get_product_by_id(self, product_id: int) -> Optional[Product]:
         return self.session.query(Product).filter(Product.id == product_id).first()

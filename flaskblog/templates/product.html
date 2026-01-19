@@ -1,15 +1,14 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="row">
+<div class="row m-0">
     <div class="col-lg-12 p-0">
         
-        <div class="card h-100 shadow-sm border-0 overflow-hidden">
+        <div class="content-section shadow rounded bg-white overflow-hidden"> 
         
-            <div class="product-img-container">
-                
+            <div class="product-img-container position-relative">
                 <img src="{{ url_for('static', filename='product_pics/' + product.image_file) }}" 
-                        class="card-img-top product-detail-img" 
+                        class="card-img-top product-detail-img w-100" 
                         alt="{{ product.name }}">
 
                 <img src="{{ url_for('static', filename='profile_pics/' + product.author.image_file) }}"
@@ -24,41 +23,40 @@
                 
                 <p class="card-text text-muted small text-truncate">
                     {{ product.description }}
-                </p> </div>
+                </p> 
+            </div>
             
-            <div class="card-footer bg-white border-0 pt-0 pb-3 pl-3">
+            <div class="card-footer bg-white border-0 pt-0 pb-3 px-3">
                 <small class="text-muted">
                     {{ product.time_created.strftime('%d/%m/%Y') }} por {{ product.author.username }}
                 </small>
 
                 {% if product.author == current_user %}
-                <div class="float-right">
-                    <a href="{{ url_for('update_product', product_id=product.id) }}" class="btn btn-sm btn-primary mr-2">Atualizar</a>
+                <div class="float-right"> <a href="{{ url_for('update_product', product_id=product.id) }}" class="btn btn-sm btn-primary mr-2">Atualizar</a>
                     <button type="button" class="btn btn-danger btn-sm m-1" data-bs-toggle="modal" data-bs-target="#deleteModal">Deletar</button>
-                {% endif %}
                 </div>
-        </div>
+                {% endif %}
+            </div> </div>
 
     </div>
 </div>
 
-<!-- Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="deleteModalLabel">Modal title</h5>
+        <h5 class="modal-title" id="deleteModalLabel">Deletar Produto?</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        ...
+        Tem certeza que deseja deletar este produto?
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
         <form action="{{ url_for('delete_product', product_id=product.id) }}" method="POST">
-            <input class="btn btn-danger" type="submit" value="Deletar Produto">
+            <input class="btn btn-danger" type="submit" value="Deletar">
         </form>
     </div>
     </div>
