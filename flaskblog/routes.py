@@ -9,6 +9,7 @@ from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, Prod
 from flaskblog.models import User, Product
 from flaskblog.repositories import UserRepository, ProductRepository
 from flaskblog.infra.connection import db
+from flaskblog.utils import get_pagination_list
 
 @app.route('/')
 @app.route('/home')
@@ -28,11 +29,15 @@ def home():
     # Divisão arredondada para cima do total de páginas.
     total_pages = math.ceil(total_products / PER_PAGE)
 
+    # Lista de paginação.
+    pagination_list = get_pagination_list(page, total_pages)
+
     return render_template(
         'home.html',
         products=products,
         page=page,
-        total_pages=total_pages
+        total_pages=total_pages,
+        pagination_list=pagination_list
     )
 
 @app.route('/about')
