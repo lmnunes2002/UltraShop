@@ -4,8 +4,10 @@ import math
 from PIL import Image
 from flask import render_template, flash, redirect, request, url_for, abort
 from flask_login import login_user, current_user, logout_user, login_required
-from flaskblog import app, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, ProductForm
+from flask_mail import Message
+from flaskblog import app, bcrypt, mail
+from flaskblog.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
+                            ProductForm, RequestResetForm, ResetPasswordForm)
 from flaskblog.models import User, Product
 from flaskblog.repositories import UserRepository, ProductRepository
 from flaskblog.infra.connection import db
@@ -208,3 +210,88 @@ def delete_product(product_id):
     repo.delete_product(product)
     flash('Produto deletado com sucesso!', 'success')
     return redirect(url_for('home'))
+
+@app.route('/users/<string:username>')
+def user_products(username):
+    PER_PAGE = 8
+    page = request.args.get('page', 1, type=int)
+
+    repo = UserRepository(db)
+    user = repo.get_user_by_username(username)
+
+    if user is None:
+        abort(404)
+        
+    offset = (page - 1) * PER_PAGE
+
+    repo = ProductRepository(db)
+    products = repo.get_products_by_user_id(user.id, limit=PER_PAGE, offset=offset)
+    total_products = repo.count_products_by_user_id(user.id)
+
+    total_pages = math.ceil(total_products / PER_PAGE)
+
+    pagination_list = get_pagination_list(page, total_pages)
+
+    return render_template(
+        'user_products.html',
+        user=user,
+        products=products,
+        page=page,
+        total_pages=total_pages,
+        pagination_list=pagination_list,
+        total_products=total_products
+    )
+
+def send_reset_email(user):
+    token = user.get_reset_token()
+    msg = Message(
+        'Redefinição de Senha',
+        sender='noreply@demo.com',
+        recipients=[user.email]
+    ) 
+
+    msg.body = f'''Para redefinir sua senha, visite o seguinte link:
+{url_for('reset_token', token=token, _external=True)}
+
+Se você não solicitou essa alteração, apenas ignore este e-mail.'''
+
+    mail.send(msg)
+    
+@app.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    
+    form = RequestResetForm()
+
+    if form.validate_on_submit():
+        repo = UserRepository(db)
+        user = repo.get_user_by_email(email=form.email.data)
+        send_reset_email(user)
+        flash('Um e-mail com instruções para redefinir sua senha foi enviado.', 'info')
+        return redirect(url_for('login'))
+
+    return render_template('reset_request.html', title='Redefinir Senha', form=form)
+
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    
+    user = User.verify_reset_token(token)
+
+    if user is None:
+        flash('O token de redefinição de senha é inválido ou expirou.', 'warning')
+        return redirect(url_for('reset_request'))
+    
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_password
+
+        repo = UserRepository(db)
+        repo.update_user(user)
+
+        flash(f'Sua senha foi atualizada, faça o login!', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_token.html', title='Redefinir Senha',form=form)

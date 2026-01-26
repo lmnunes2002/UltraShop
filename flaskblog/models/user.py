@@ -1,8 +1,9 @@
-from flaskblog import login_manager
+from flaskblog import app, login_manager
 from flaskblog.infra.connection import Base, db
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
+from itsdangerous import URLSafeTimedSerializer
 from datetime import datetime
 
 @login_manager.user_loader
@@ -36,6 +37,21 @@ class User(Base, UserMixin):
         'polymorphic_identity': 'user',
         'polymorphic_on': 'type'
     }
+
+    def get_reset_token(self):
+        s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+        return s.dumps({'user_id': self.id}, salt='password-reset-salt')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token, salt='password-reset-salt', max_age=1800)
+        except:
+            return None
+
+        user_id = data['user_id']
+        return db.get(User, user_id)
 
     # Metódo mágico para representar e debugar
     def __repr__(self):

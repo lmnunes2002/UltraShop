@@ -17,7 +17,9 @@ class UserRepository:
 
     # Métodos Read
     def list_users(self) -> List[User]:
-        return self.session.query(User).all()
+        return self.session.query(User.time_created.desc())\
+            .order_by(User)\
+            .all()
 
     def get_user_by_username(self, username: str) -> Optional[User]:
         return self.session.query(User).filter(User.username == username).first()

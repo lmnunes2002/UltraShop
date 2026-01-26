@@ -116,3 +116,30 @@ class ProductForm(FlaskForm):
     )
 
     submit = SubmitField('Cadastrar Produto')
+
+class RequestResetForm(FlaskForm):
+    email = StringField('E-mail',
+        validators=[DataRequired(message='O e-mail é obrigatório'),
+        Email(message='Formato de e-mail inválido.')]
+    )
+
+    submit = SubmitField('Solicitar Redfinição de Senha')
+
+    def validate_email(self, email):
+        user = db.query(User).filter_by(email=email.data).first()
+
+        if user is None:
+            raise ValidationError('Este e-mail não está cadastrado. Por favor, escolha outro.')
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField('Senha',
+        validators=[DataRequired(message='A senha não pode estar vazia.'),
+        Length(min=6, message='A senha deve ter pelo menos 6 caracteres.')]
+    )
+
+    password_confirm = PasswordField('Confirmar Senha',
+        validators=[DataRequired(message='Confirme sua senha.'),
+        EqualTo('password', message='As senhas devem ser iguais.')]
+    )
+
+    submit = SubmitField('Redefinir Senha')

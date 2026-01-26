@@ -18,6 +18,7 @@ class ProductRepository:
     # Métodos Read
     def list_products(self, limit: int, offset: int) -> List[Product]:
         return self.session.query(Product)\
+                    .order_by(Product.time_updated.desc())\
                     .limit(limit)\
                     .offset(offset)\
                     .all()
@@ -26,11 +27,19 @@ class ProductRepository:
     def count_products(self) -> int:
         return self.session.query(Product).count()
 
+    # Count por id de usuário: Query de filtro
+    def count_products_by_user_id(self, user_id: int) -> int:
+        return self.session.query(Product).filter(Product.user_id == user_id).count()
+
     def get_product_by_id(self, product_id: int) -> Optional[Product]:
         return self.session.query(Product).filter(Product.id == product_id).first()
 
-    def get_products_by_user_id(self, user_id: int) -> List[Product]:
-        return self.session.query(Product).filter(Product.user_id == user_id).all()
+    def get_products_by_user_id(self, user_id: int, limit: int, offset: int) -> List[Product]:
+        return self.session.query(Product)\
+                    .filter(Product.user_id == user_id)\
+                    .limit(limit)\
+                    .offset(offset)\
+                    .all()
 
     # Método Update
     def update_product(self, product: Product) -> Product:
