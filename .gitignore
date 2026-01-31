@@ -6,3 +6,5 @@ venv/
 instance/
 .vscode/
 *.db
+flaskblog/static/profile_pics/*
+flaskblog/static/product_pics/*

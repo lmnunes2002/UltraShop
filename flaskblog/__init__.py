@@ -1,37 +1,39 @@
-import os
-from flask import Flask
+from flask import Flask, app
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 from flaskblog.infra.connection import db, engine, Base
+from flaskblog.config import Config
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
-
-app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-
-app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
-app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD')
-mail = Mail(app)
-
-database_uri = app.config.get('DATABASE_URL', 'sqlite:///site.db')
-app.config['SQLALCHEMY_DATABASE_URI'] = database_uri
-app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
-
-bcrypt = Bcrypt(app)
-
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+mail = Mail()
+bcrypt = Bcrypt()
+login_manager = LoginManager()
+login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db.remove()
-    print("Sessão encerrada.")
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(Config)
 
-with app.app_context():
-    Base.metadata.create_all(bind=engine)
+    mail.init_app(app)
+    bcrypt.init_app(app)
+    login_manager.init_app(app)
 
-from flaskblog import routes
+    @app.teardown_appcontext
+    def shutdown_session(exception=None):
+        db.remove()
+        print("Sessão encerrada.")
+
+    with app.app_context():
+        Base.metadata.create_all(bind=engine)
+
+    # Importando os Blueprints
+    from flaskblog.users.routes import users
+    from flaskblog.products.routes import products
+    from flaskblog.main.routes import main
+
+    app.register_blueprint(users)
+    app.register_blueprint(products)
+    app.register_blueprint(main)
+
+    return app

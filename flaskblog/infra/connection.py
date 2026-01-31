@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 
@@ -5,14 +6,14 @@ from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
 Base = declarative_base()
 
 # Definição da URL de conexão com o banco de dados SQLite
-DATABASE_URL = 'sqlite:///site.db'
+database_uri = os.environ.get('DATABASE_URL', 'sqlite:///site.db')
 
 # Criação da engine de conexão
 # String de conexão do sqlite (usa driver interno)
 # Habilita logging de SQL para debug
 # Necessário para SQLite com múltiplas threads
 engine = create_engine(
-    DATABASE_URL,    
+    database_uri,    
     echo=True,              
     connect_args={"check_same_thread": False}
 )
