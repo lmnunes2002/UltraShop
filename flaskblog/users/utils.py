@@ -21,6 +21,15 @@ def save_picture(form_picture, folder_path, output_size):
 
     return picture_fn
 
+def delete_picture(picture_filename, folder_path):
+    picture_path = os.path.join(current_app.root_path, 'static', folder_path, picture_filename)
+    # Não apaga a imagem padrão.
+    if picture_filename == 'default.jpg':
+        return
+    
+    if os.path.exists(picture_path):
+        os.remove(picture_path)
+    
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message(

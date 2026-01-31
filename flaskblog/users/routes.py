@@ -83,6 +83,19 @@ def account():
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Sua conta', image_file=image_file, form=form)
 
+@users.route('/users/<int:user_id>/delete', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    repo = UserRepository(db)
+    user = repo.get_user_by_id(user_id)
+
+    if user != current_user:
+        abort(403)
+
+    repo.delete_user(user)
+    flash('Sua conta foi deletada com sucesso!', 'success')
+    return redirect(url_for('main.home'))
+
 @users.route('/users/<string:username>')
 def user_products(username):
     PER_PAGE = 8

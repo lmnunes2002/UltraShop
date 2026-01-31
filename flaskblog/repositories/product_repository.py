@@ -1,6 +1,7 @@
-from flaskblog.models.product import Product
-from sqlalchemy.orm import Session
 from typing import List, Optional
+from sqlalchemy.orm import Session
+from flaskblog.models.product import Product
+from flaskblog.products.utils import delete_picture
 
 class ProductRepository:
     # Inicializando repositorio com a sessão do banco de dados
@@ -49,5 +50,11 @@ class ProductRepository:
 
     # Método Delete
     def delete_product(self, product: Product) -> None:
+        # Armazena o nome da imagem antes de deletar o produto do banco.
+        image_file = product.image_file
+
+        if image_file:
+            delete_picture(image_file, 'product_pics')
+
         self.session.delete(product)
         self.session.commit()

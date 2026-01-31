@@ -17,3 +17,9 @@ def save_picture(form_picture, folder_path, output_size):
     image.save(picture_path)
 
     return picture_fn
+
+def delete_picture(picture_filename, folder_path):    
+    picture_path = os.path.join(current_app.root_path, 'static', folder_path, picture_filename)
+    
+    if os.path.exists(picture_path):
+        os.remove(picture_path)
