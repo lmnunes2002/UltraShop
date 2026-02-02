@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import DecimalField, StringField, SubmitField, TextAreaField
+from wtforms import IntegerField, DecimalField, StringField, SubmitField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Length, NumberRange, Optional
 
 class ProductForm(FlaskForm):
@@ -24,6 +24,19 @@ class ProductForm(FlaskForm):
         FileAllowed(['jpg', 'png'], 'Apenas imagens JPG e PNG são permitidas!')]
     )
 
+    quantity = IntegerField('Quantidade em Estoque', 
+        validators=[DataRequired(),
+        NumberRange(min=1, message="O cadastro deve ser de pelo menos 1 unidade.")],
+        default=1)
+    
+    condition = SelectField('Condição do Produto', 
+        choices=[('Novo', 'Novo'), ('Seminovo', 'Seminovo'), ('Usado', 'Usado')],
+        validators=[DataRequired()])
+    
+    status = SelectField('Status do Anúncio', 
+        choices=[('Ativo', 'Ativo'), ('Reservado', 'Reservado'), ('Vendido', 'Vendido')],
+        default='Ativo')
+
     submit = SubmitField('Cadastrar Produto')
 
 class UpdateProductForm(FlaskForm):
@@ -46,5 +59,18 @@ class UpdateProductForm(FlaskForm):
         validators= [Optional(),
         FileAllowed(['jpg', 'png'], 'Apenas imagens JPG e PNG são permitidas!')]
     )
+
+    quantity = IntegerField('Quantidade em Estoque', 
+        validators=[DataRequired(),
+        NumberRange(min=1, message="O cadastro deve ser de pelo menos 1 unidade.")],
+        default=1)
+    
+    condition = SelectField('Condição do Produto', 
+        choices=[('Novo', 'Novo'), ('Seminovo', 'Seminovo'), ('Usado', 'Usado')],
+        validators=[DataRequired()])
+    
+    status = SelectField('Status do Anúncio', 
+        choices=[('Ativo', 'Ativo'), ('Reservado', 'Reservado'), ('Vendido', 'Vendido')],
+        default='Ativo')
 
     submit = SubmitField('Atualizar Produto')

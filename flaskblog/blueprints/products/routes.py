@@ -18,7 +18,10 @@ def new_product():
         product = Product(
             name=form.title.data, 
             price=form.price.data, 
-            description=form.description.data, 
+            description=form.description.data,
+            quantity=form.quantity.data,     
+            condition=form.condition.data,   
+            status=form.status.data,
             image_file=product_image_file, 
             author=current_user
         )
@@ -54,6 +57,9 @@ def update_product(product_id):
         product.name = form.title.data
         product.price = form.price.data
         product.description = form.description.data
+        product.quantity = form.quantity.data
+        product.condition = form.condition.data
+        product.status = form.status.data
 
         if form.picture.data:
             # Deleta imagem antiga do produto
@@ -72,6 +78,9 @@ def update_product(product_id):
         form.title.data = product.name
         form.price.data = product.price
         form.description.data = product.description
+        form.quantity.data = product.quantity
+        form.condition.data = product.condition
+        form.status.data = product.status
     
     return render_template('create_product.html', title='Atualizar Produto', form=form, legend='Atualizar Produto')
 

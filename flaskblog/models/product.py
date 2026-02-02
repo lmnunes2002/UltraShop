@@ -18,6 +18,11 @@ class Product(Base):
     time_created = Column(DateTime(timezone=True), default=datetime.now)
     time_updated = Column(DateTime(timezone=True), onupdate=datetime.now, default=datetime.now)
 
+    # Melhorias para seguir a lógica do e-commerce
+    quantity = Column(Integer, nullable=False, default=1)
+    condition = Column(String(20), nullable=False, default='usado')
+    status = Column(String(20), nullable=False, default='ativo')
+
     # Metódo mágico para representar e debugar
     def __repr__(self):
         return f'({self.name} - {self.price} - {self.image_file} - {self.user_id})'
