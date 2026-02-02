@@ -1,7 +1,7 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from flaskblog.models.user import User
-from flaskblog.users.utils import delete_picture
+from flaskblog.blueprints.users.utils import delete_picture
 
 class UserRepository:
     # Inicializando repositorio com a sessão do banco de dados

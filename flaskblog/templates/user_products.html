@@ -86,9 +86,9 @@
     {% for p in pagination_list %}
         {% if p %}
             {% if p == page %}
-                <a class="btn btn-info mb-4 mx-1" href="{{ url_for('main.home', page=p) }}">{{ p }}</a>
+                <a class="btn btn-info mb-0 mx-1" href="{{ url_for('main.home', page=p) }}">{{ p }}</a>
             {% else %}
-                <a class="btn btn-outline-info mb-4 mx-1" href="{{ url_for('main.home', page=p) }}">{{ p }}</a>
+                <a class="btn btn-outline-info mb-0 mx-1" href="{{ url_for('main.home', page=p) }}">{{ p }}</a>
             {% endif %}
         {% else %}
             ...

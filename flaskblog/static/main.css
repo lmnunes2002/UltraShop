@@ -39,7 +39,7 @@ body {
 
 .navbar-collapse.show {
     background-color: #5a008a; 
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 .main-content {
@@ -146,6 +146,45 @@ footer a {
 footer a:hover {
     color: #ffffff;
     transform: translateX(5px);
+}
+
+.custom-tooltip-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.custom-tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #4b0082; 
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 100; 
+    bottom: 125%; 
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.75rem;
+    white-space: normal; 
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+}
+
+.custom-tooltip-container:hover .custom-tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+.custom-tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #4b0082 transparent transparent transparent;
 }
 
 /* Ícones de Redes Sociais (Efeito de pulsação) */

@@ -1,7 +1,7 @@
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from flaskblog.models.product import Product
-from flaskblog.products.utils import delete_picture
+from flaskblog.blueprints.products.utils import delete_picture
 
 class ProductRepository:
     # Inicializando repositorio com a sessão do banco de dados

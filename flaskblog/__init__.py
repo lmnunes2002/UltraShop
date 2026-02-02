@@ -9,6 +9,7 @@ mail = Mail()
 bcrypt = Bcrypt()
 login_manager = LoginManager()
 login_manager.login_view = 'users.login'
+login_manager.login_message = 'Por favor, faça login para acessar esta página.'
 login_manager.login_message_category = 'info'
 
 def create_app(config_class=Config):
@@ -27,13 +28,15 @@ def create_app(config_class=Config):
     with app.app_context():
         Base.metadata.create_all(bind=engine)
 
-    # Importando os Blueprints
-    from flaskblog.users.routes import users
-    from flaskblog.products.routes import products
-    from flaskblog.main.routes import main
+    # Importando cada blueprint
+    from flaskblog.blueprints.users.routes import users
+    from flaskblog.blueprints.products.routes import products
+    from flaskblog.blueprints.errors.handlers import errors
+    from flaskblog.blueprints.main.routes import main
 
     app.register_blueprint(users)
     app.register_blueprint(products)
+    app.register_blueprint(errors)
     app.register_blueprint(main)
 
     return app

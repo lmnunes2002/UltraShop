@@ -3,8 +3,8 @@ from flask_login import current_user, login_required
 from flaskblog.infra.connection import db
 from flaskblog.repositories import ProductRepository
 from flaskblog.models import Product
-from flaskblog.products.forms import ProductForm, UpdateProductForm
-from flaskblog.products.utils import save_picture, delete_picture
+from flaskblog.blueprints.products.forms import ProductForm, UpdateProductForm
+from flaskblog.blueprints.products.utils import save_picture, delete_picture
 
 products = Blueprint('products', __name__)
 

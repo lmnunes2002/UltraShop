@@ -5,8 +5,9 @@ from flaskblog import bcrypt
 from flaskblog.infra.connection import db
 from flaskblog.repositories import UserRepository, ProductRepository
 from flaskblog.models import User
-from flaskblog.users.forms import RegistrationForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
-from flaskblog.users.utils import save_picture, send_reset_email, get_pagination_list
+from flaskblog.blueprints.users.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
+                                            RequestResetForm, ResetPasswordForm)
+from flaskblog.blueprints.users.utils import save_picture, send_reset_email, get_pagination_list
 
 users = Blueprint('users', __name__)
 

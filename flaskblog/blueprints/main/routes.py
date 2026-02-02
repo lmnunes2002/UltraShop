@@ -2,7 +2,7 @@ import math
 from flask import Blueprint, render_template, request
 from flaskblog.infra.connection import db
 from flaskblog.repositories import ProductRepository
-from flaskblog.main.utils import get_pagination_list
+from flaskblog.blueprints.main.utils import get_pagination_list
 
 main = Blueprint('main', __name__)
 
