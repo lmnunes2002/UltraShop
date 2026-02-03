@@ -82,21 +82,6 @@
             </div>
 
             <div class="row g-3 mb-4 align-items-center">
-               
-                <div class="col-md-4">
-                    {{ form.status.label(class="form-label") }}
-                    {% if form.status.errors %}
-                        {{ form.status(class="form-select is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.status.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.status(class="form-select") }}
-                    {% endif %}
-                </div>
-
                 <div class="col-md-8">
                     <label class="form-label">Foto do Produto</label>
                     {{ form.picture(class="form-control") }}

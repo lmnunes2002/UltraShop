@@ -1,14 +1,14 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="container-fluid p-0">
+<div class="container-fluid p-0 min-vh-100">
     <div class="row m-0 justify-content-center">
-        <div class="col-md-5 col-lg-6 p-0">
+        <div class="col-md-5 col-lg-6 p-4 mx-auto">
             <div class="content-section shadow p-4 rounded bg-white">
                 <form method="POST" action="" novalidate>
                     {{ form.hidden_tag() }}
                     <fieldset class="form-group mb-auto">
-                        <legend class="border-bottom mb-4">Cadastro</legend>
+                        <legend class="border-bottom mb-4">Cadastre-se aqui!</legend>
 
                         <div class="form-group">
                             {{ form.username.label(class="form-control-label") }}
@@ -21,7 +21,7 @@
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {{ form.username(class="form-control form-control-lg") }}
+                                {{ form.username(class="form-control form-control-lg", placeholder="Nome pessoal ou apelido") }}
                             {% endif %}
                         </div>
                         
@@ -36,7 +36,7 @@
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {{ form.email(class="form-control form-control-lg") }}
+                                {{ form.email(class="form-control form-control-lg", placeholder="E-mail, exemplo: usuario@email.com") }}
                             {% endif %}
                         </div>
 
@@ -51,7 +51,7 @@
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {{ form.password(class="form-control form-control-lg") }}
+                                {{ form.password(class="form-control form-control-lg", placeholder="Sua senha") }}
                             {% endif %}
                         </div>
 
@@ -66,13 +66,13 @@
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {{ form.password_confirm(class="form-control form-control-lg") }}
+                                {{ form.password_confirm(class="form-control form-control-lg", placeholder="Confirme sua senha") }}
                             {% endif %}
                         </div> 
                     </fieldset>
 
-                    <div class="form-group mt-3">
-                        {{ form.submit(class="btn btn-outline-info") }}
+                    <div class="form-group d-grid mt-4">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
                     </div>
                 </form>
 
@@ -85,7 +85,7 @@
             </div>
         </div>
 
-         <div class="col-md-7 col-lg-6 d-none d-md-block p-0 ml-n5">
+         <div class="col-md-7 col-lg-6 p-4 d-none d-md-block ml-n5">
             <div class="auth-bg-image"></div>
         </div>
     </div>
