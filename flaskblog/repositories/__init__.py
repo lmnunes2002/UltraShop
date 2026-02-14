@@ -1,2 +1,3 @@
 from .user_repository import UserRepository
 from .product_repository import ProductRepository
+from .comment_repository import CommentRepository

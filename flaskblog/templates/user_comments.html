@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<!-- Implementar possibilidade do usuário ver o comentário de outros usuários!!! -->
+{% if current_user == user %}
+    <h3 class="mb-3"> Seus Comentários: {{ total_comments }}</h3>
+{% else %}
+    <h3 class="mb-3">Comentários de {{ user.username }}: {{ total_comments }}</h3>
+{% endif %}
+
+<div class = "row">
+    <div class="col-md-10">
+        <div class="row">
+            {% for comment in comments %}
+                <div class="col-lg-6 col-md-12 mb-4">
+                    <div class="card h-100 shadow-sm border-0 overflow-hidden">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <h5><a class="card-title mb-0 text-truncate comment-title text-decoration-none" href="{{ url_for('products.product', product_id=comment.target.id) }}">{{ comment.target.name }}</a></h5>
+                                    <div class="ms-auto">
+                                        {% for i in range(comment.stars) %}
+                                            <i class="bi bi-star-fill text-warning small"></i>
+                                        {% endfor %}
+                                        {% for i in range(5 - comment.stars) %}
+                                            <i class="bi bi-star text-muted small"></i>
+                                        {% endfor %}
+                                    </div>
+                            </div>
+                            <p class="card-text text-muted small text-truncate custom-tooltip-container" title="{{ comment.content }}">
+                                {{ comment.content }}
+                                <span class="custom-tooltip-text">{{ comment.content }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card shadow-sm border-0 mb-4 rounded bg-white"> 
+            <div class="card-body p-3">
+                <h5 class="card-title border-bottom pb-2 mb-2">Sidebar</h5>
+                
+                <div class="list-group list-group-flush">
+                    
+                    <a href="{{ url_for('products.new_product') if current_user.is_authenticated else url_for('users.login')}}" 
+                    class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'products.new_product' else '' }} border-0 px-0 py-2 text-dark">
+                    Novo Produto
+                    </a>
+
+                    <a href="{{ url_for('users.user_products', username=user.username) }}"
+                    class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'users.user_products' else '' }} border-0 px-0 py-2 text-dark">
+                    Seus Produtos
+                    </a>
+
+                    <a href="{{ url_for('users.user_comments', username=user.username) }}"
+                    class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'users.user_comments' else '' }} border-0 px-0 py-2 text-dark">
+                    Comentários
+                    </a>
+
+                    <a href="#"
+                    class="list-group-item list-group-item-action border-0 px-0 py-2 text-dark">
+                    Calendário
+                    </a>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="pagination">
+    {% if page > 1 %}
+        <a href="{{ url_for('users.user_comments', username=user.username, page=page-1) }}">Anterior</a>
+    {% endif %}
+
+    {% for p in pagination_list %}
+        {% if p %}
+            {% if p == page %}
+                <a class="btn btn-info mb-0 mx-1" href="{{ url_for('users.user_comments', username=user.username, page=p) }}">{{ p }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-0 mx-1" href="{{ url_for('users.user_comments', username=user.username, page=p) }}">{{ p }}</a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+
+    {% if page < total_pages %}
+        <a href="{{ url_for('users.user_comments', username=user.username, page=page+1) }}">Próximo</a>
+    {% endif %}
+</div>
+{% endblock content %}

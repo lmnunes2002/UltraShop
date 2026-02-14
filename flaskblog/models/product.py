@@ -1,6 +1,7 @@
-from flaskblog.infra.connection import Base
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from datetime import datetime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy.orm import relationship
+from flaskblog.infra.connection import Base
 
 class Product(Base):
     __tablename__ = 'products'
@@ -22,6 +23,14 @@ class Product(Base):
     quantity = Column(Integer, nullable=False, default=1)
     condition = Column(String(20), nullable=False, default='usado')
     status = Column(String(20), nullable=False, default='ativo')
+
+    # Relação 1 -> N com comentários
+    comments = relationship(
+        'Comment',
+        backref='target',
+        lazy=True,
+        cascade='all, delete-orphan'
+    )
 
     # Metódo mágico para representar e debugar
     def __repr__(self):

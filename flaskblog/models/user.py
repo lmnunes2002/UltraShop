@@ -1,10 +1,10 @@
-from flaskblog import app, login_manager
-from flaskblog.infra.connection import Base, db
+from datetime import datetime
+from itsdangerous import URLSafeTimedSerializer
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from flask_login import UserMixin
-from itsdangerous import URLSafeTimedSerializer
-from datetime import datetime
+from flaskblog import app, login_manager
+from flaskblog.infra.connection import Base, db
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -23,9 +23,16 @@ class User(Base, UserMixin):
     time_created = Column(DateTime(timezone=True), default=datetime.now)
     time_updated = Column(DateTime(timezone=True), onupdate=datetime.now, default=datetime.now)
 
-    # Relação 1 -> N com produtos
+    # Relação 1 -> N com produtos e comentários
     products = relationship(
         'Product',
+        backref='author',
+        lazy=True,
+        cascade='all, delete-orphan'
+    )
+
+    comments = relationship(
+        'Comment',
         backref='author',
         lazy=True,
         cascade='all, delete-orphan'

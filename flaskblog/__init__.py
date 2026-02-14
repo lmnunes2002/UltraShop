@@ -25,17 +25,22 @@ def create_app(config_class=Config):
         db.remove()
         print("Sessão encerrada.")
 
+    # Importando os modelos para garantir que as tabelas sejam criadas
+    from flaskblog.models import User, Product, Comment
+
     with app.app_context():
         Base.metadata.create_all(bind=engine)
 
     # Importando cada blueprint
     from flaskblog.blueprints.users.routes import users
     from flaskblog.blueprints.products.routes import products
+    from flaskblog.blueprints.comments.routes import comments
     from flaskblog.blueprints.errors.handlers import errors
     from flaskblog.blueprints.main.routes import main
 
     app.register_blueprint(users)
     app.register_blueprint(products)
+    app.register_blueprint(comments)
     app.register_blueprint(errors)
     app.register_blueprint(main)
 

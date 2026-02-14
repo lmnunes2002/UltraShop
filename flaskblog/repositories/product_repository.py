@@ -19,7 +19,7 @@ class ProductRepository:
     # Métodos Read
     def list_products(self, limit: int, offset: int) -> List[Product]:
         return self.session.query(Product)\
-                    .order_by(Product.time_updated.desc())\
+                    .order_by(Product.time_created.desc())\
                     .limit(limit)\
                     .offset(offset)\
                     .all()

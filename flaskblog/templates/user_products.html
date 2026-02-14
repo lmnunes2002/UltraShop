@@ -1,16 +1,18 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h3 class="mb-3">Produtos de {{ user.username }}: {{total_products}}</h3>
+{% if current_user == user %}
+    <h3 class="mb-3">Seus Produtos: {{total_products}}</h3>
+{% else %}
+    <h3 class="mb-3">Produtos de {{ user.username }}: {{total_products}}</h3>
+{% endif %}
 
 <div class="row">
     <div class="col-md-10">
         <div class="row">
             {% for product in products %}
                 <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                    
-                    <div class="card h-100 shadow-sm border-0 overflow-hidden">
-                    
+                    <div class="card h-100 shadow rounded border-0 overflow-hidden">
                         <div class="product-img-container">
                             
                             <img src="{{ url_for('static', filename='product_pics/' + product.image_file) }}" 
@@ -19,6 +21,7 @@
 
                             <img src="{{ url_for('static', filename='profile_pics/' + product.author.image_file) }}"
                                 class="rounded-circle shadow-sm border border-dark product-author-overlay">
+
                         </div>
                         
                         <div class="card-body p-3">
@@ -27,16 +30,21 @@
                             </div>
                                 
                             <p class="font-weight-bold text-success">
-                                ${{ product.price }}
+                                ${{ "%.2f" | format(product.price) }}
                             </p>
 
-                            <p class="card-text text-muted small text-truncate">
+                            <p class="card-text text-muted small text-truncate custom-tooltip-container" title="{{ product.description }}">
                                 {{ product.description }}
-                            </p> </div>
+                                <span class="custom-tooltip-text">{{ product.description }}</span>
+                            </p> 
+                        </div>
                         
                         <div class="card-footer bg-white border-0 pt-0 pb-3 pl-3">
                             <small class="text-muted">
-                                {{ product.time_created.strftime('%d/%m') }} por {{ product.author.username }}
+                                {{ product.time_created.strftime('%d/%m') }} por 
+                                <a class="text-decoration-none text-dark" href="{{ url_for('users.user_products', username=product.author.username) }}">
+                                    {{ product.author.username }}
+                                </a>
                             </small>
                         </div>
                     </div>
@@ -55,19 +63,22 @@
                 <div class="list-group list-group-flush">
                     
                     <a href="{{ url_for('products.new_product') if current_user.is_authenticated else url_for('users.login')}}" 
-                    class="list-group-item list-group-item-action border-0 px-0 py-2 text-dark">
+                    class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'products.new_product' else '' }} border-0 px-0 py-2 text-dark">
                     Novo Produto
                     </a>
 
-                    <a href="#" class="list-group-item list-group-item-action border-0 px-0 py-2 text-dark">
+                    <a href="{{ url_for('users.user_products', username=current_user.username) }}"
+                    class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'users.user_products' else '' }} border-0 px-0 py-2 text-dark">
                     Seus Produtos
                     </a>
 
-                    <a href="#" class="list-group-item list-group-item-action border-0 px-0 py-2 text-dark">
+                    <a href="{{ url_for('users.user_comments', username=current_user.username) }}"
+                    class="list-group-item list-group-item-action {{ 'active' if request.endpoint == 'users.user_comments' else '' }} border-0 px-0 py-2 text-dark">
                     Comentários
                     </a>
 
-                    <a href="#" class="list-group-item list-group-item-action border-0 px-0 py-2 text-dark">
+                    <a href="#"
+                    class="list-group-item list-group-item-action border-0 px-0 py-2 text-dark">
                     Calendário
                     </a>
                     
@@ -75,7 +86,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <div class="pagination">

@@ -1,64 +1,221 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="row m-0">
-    <div class="col-lg-12 p-0">
+<div class="row">
+    <div class="col-lg-9">
         
-        <div class="content-section shadow rounded bg-white overflow-hidden"> 
-        
-            <div class="product-img-container position-relative">
-                <img src="{{ url_for('static', filename='product_pics/' + product.image_file) }}" 
-                        class="card-img-top product-detail-img w-100" 
-                        alt="{{ product.name }}">
-
-                <img src="{{ url_for('static', filename='profile_pics/' + product.author.image_file) }}"
-                        class="rounded-circle shadow-sm border border-dark product-author-overlay">
-            </div>
-            
-            <div class="card-body p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="card-title mb-0 text-truncate product-title">{{ product.name }}</h5>
-                        <span class="font-weight-bold text-success">${{ product.price }}</span>
+        <div class="content-section shadow rounded bg-white">
+            <div class="row g-0">
+                <div class="col-lg-6 col-md-6">
+                    <div class="product-detail-container">
+                        <img src="{{ url_for('static', filename='product_pics/' + product.image_file) }}" 
+                             class="product-detail-img" 
+                             alt="{{ product.name }}">
+                    </div>
                 </div>
                 
-                <p class="card-text text-muted small text-truncate">
-                    {{ product.description }}
-                </p> 
-            </div>
+                <div class="col-lg-6 col-md-6">
+                    <div class="card-body p-3 d-flex flex-column h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h4 class="card-title mb-0 text-truncate fw-bold">{{ product.name }}</h4>
+                            <span class="fs-5 fw-bold text-success">R${{ "%.2f" | format(product.price) }}</span>
+                        </div>
+                        
+                        <p class="card-text text-muted mb-3 small">
+                            {{ product.description }}
+                        </p> 
+
+                        <div class="mt-auto border-top pt-2">
+                            <small class="text-muted d-block mb-2">
+                                Postado em: {{ product.time_created.strftime('%d/%m/%Y') }}
+                            </small>
             
-            <div class="card-footer bg-white border-0 pt-0 pb-3 px-3">
-                <small class="text-muted">
-                    {{ product.time_created.strftime('%d/%m/%Y') }} por {{ product.author.username }}
-                </small>
-
-                {% if product.author == current_user %}
-                <div class="float-right"> <a href="{{ url_for('products.update_product', product_id=product.id) }}" class="btn btn-sm btn-primary mr-2">Atualizar</a>
-                    <button type="button" class="btn btn-danger btn-sm m-1" data-bs-toggle="modal" data-bs-target="#deleteModal">Deletar</button>
+                            {% if product.author == current_user %}
+                                <div class="d-flex justify-content-start gap-2"> 
+                                    <a href="{{ url_for('products.update_product', product_id=product.id) }}" class="btn btn-sm btn-primary">Atualizar</a>
+                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Deletar</button>
+                                </div>
+                            {% else %}
+                                <div class="d-grid">
+                                    <button class="btn btn-success">Comprar</button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-                {% endif %}
-            </div> </div>
+            </div>
+        </div>
 
-    </div>
+        <div class="content-section shadow rounded bg-white mt-4 p-4">
+            {% if current_user.is_authenticated %}
+                <form method="POST"
+                action="{{ url_for('comments.update_comment', comment_id=request.view_args['comment_id']) if request.endpoint == 'comments.update_comment' else url_for('comments.comment_product', product_id=product.id) }}">
+                    {{ form.hidden_tag() }}
+                    <div class="d-flex align-items-center mb-3 gap-3">
+                        <label class="form-label fw-bold small">Nota:</label>
+                        {% if form.stars.errors %}
+                            {{ form.stars(class="form-select is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.stars.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.stars(class="form-select") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {% if form.content.errors %}
+                            {{ form.content(class="form-control is-invalid", rows="3", placeholder="Escreva seu comentário...") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.content.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.content(class="form-control", rows="3", placeholder="Escreva seu comentário...") }}
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            {{ 'Atualizar Comentário' if request.endpoint == 'comments.update_comment' else 'Enviar Comentário' }}
+                        </button>
+                    </div>
+                </form>
+            {% else %}
+                <div class="alert alert-light border text-center">
+                    <i class="bi bi-lock"></i> 
+                    <a href="{{ url_for('users.login') }}" class="text-decoration-none fw-bold">Faça login</a> para comentar neste produto.
+                </div>
+            {% endif %}
+        </div> 
+
+        <h5 class="mt-4 mb-4 fw-bold border-bottom pb-2">Comentários</h5>
+        <div class="comment-container mb-4">
+            {% for comment in comments %}
+                <div class="mb-3 border-bottom pb-3"> 
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-flex align-items-center mb-2">
+                            <img src="{{ url_for('static', filename='profile_pics/' + comment.author.image_file) }}" 
+                                class="rounded-circle shadow-sm border border-dark comment-profile-img" 
+                                alt="{{ comment.author.username }}">
+                            
+                            <div class="ms-2">
+                                <h6 class="mb-0 fw-bold">{{ comment.author.username }}</h6>
+                                <div>
+                                    {% for i in range(comment.stars) %}
+                                        <i class="bi bi-star-fill text-warning small"></i>
+                                    {% endfor %}
+                                    {% for i in range(5 - comment.stars) %}
+                                        <i class="bi bi-star text-muted small"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if comment.author == current_user %}
+                            <div class="d-flex gap-2"> 
+                                <a href="{{ url_for('comments.update_comment', comment_id=comment.id) }}" class="btn btn-sm btn-primary">Atualizar</a>
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCommentModal{{ comment.id }}">Deletar</button>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <p class="mb-1">{{ comment.content }}</p>
+                    
+                    <span class="text-muted small">
+                        {{ comment.time_created.strftime('%d/%m/%Y às %H:%M') }}
+                    </span>
+
+                </div>
+
+                <div class="modal fade" id="deleteCommentModal{{ comment.id }}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title">Deletar Comentário?</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Tem certeza que deseja apagar seu comentário? Essa ação não pode ser desfeita.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            
+                            <form action="{{ url_for('comments.delete_comment', comment_id=comment.id) }}" method="POST">
+                                <button type="submit" class="btn btn-danger">Sim, Deletar</button>
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+                </div>  
+            {% else %}
+                <p class="text-muted">Nenhum comentário ainda. Seja o primeiro a comentar!</p>
+            {% endfor %}
+        </div>
+
+    </div> 
+    
+    <div class="col-lg-3 col-md-6 d-none d-lg-block">
+        <div class="card shadow-sm border-0 mb-4 rounded bg-white"> 
+            <div class="card-body p-3">
+                <h6 class="justify-content-center d-flex fw-bold mb-2">Vendedor</h6>
+                
+                <img src="{{ url_for('static', filename='profile_pics/' + product.author.image_file) }}" 
+                    class="rounded-circle shadow-sm border border-dark d-block mx-auto mb-2 seller-profile-img" 
+                    alt="{{ product.author.username }}">
+                
+                <h6 class=" justify-content-center d-flex mb-1 fw-bold">{{ product.author.username }}</h6>
+            </div>
+
+            <div class="d-flex flex-column gap-2 p-3">
+                <a href="#" class="btn btn-outline-primary btn-sm">Ver Perfil</a>
+                <a href="{{ url_for('users.user_products', username=product.author.username) }}" class="btn btn-outline-secondary btn-sm">Outros anúncios</a>
+            </div>
+        </div>
+    </div> 
 </div>
 
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+<div class="pagination">
+    {% if page > 1 %}
+        <a href="{{ url_for('products.product', product_id=product.id, page=page-1) }}">Anterior</a>
+    {% endif %}
+
+    {% for p in pagination_list %}
+        {% if p %}
+            {% if p == page %}
+                <a class="btn btn-info mb-0 mx-1" href="{{ url_for('products.product', product_id=product.id, page=p) }}">{{ p }}</a>
+            {% else %}
+                <a class="btn btn-outline-info mb-0 mx-1" href="{{ url_for('products.product', product_id=product.id, page=p) }}">{{ p }}</a>
+            {% endif %}
+        {% else %}
+            ...
+        {% endif %}
+    {% endfor %}
+
+    {% if page < total_pages %}
+        <a href="{{ url_for('products.product', product_id=product.id, page=page+1) }}">Próximo</a>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header bg-danger text-white">
         <h5 class="modal-title" id="deleteModalLabel">Deletar Produto?</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Tem certeza que deseja deletar este produto?
+        Tem certeza que deseja deletar o produto <strong>{{ product.name }}</strong>? Essa ação é irreversível.
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         <form action="{{ url_for('products.delete_product', product_id=product.id) }}" method="POST">
-            <input class="btn btn-danger" type="submit" value="Deletar">
+            <input class="btn btn-danger" type="submit" value="Sim, Deletar">
         </form>
-    </div>
+      </div>
     </div>
   </div>
 </div>

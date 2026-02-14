@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, flash, redirect, request, url_for,
 from flask_login import login_user, current_user, logout_user, login_required
 from flaskblog import bcrypt
 from flaskblog.infra.connection import db
-from flaskblog.repositories import UserRepository, ProductRepository
+from flaskblog.repositories import UserRepository, ProductRepository, CommentRepository
 from flaskblog.models import User
 from flaskblog.blueprints.users.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
                                             RequestResetForm, ResetPasswordForm)
@@ -97,7 +97,7 @@ def delete_user(user_id):
     flash('Sua conta foi deletada com sucesso!', 'success')
     return redirect(url_for('main.home'))
 
-@users.route('/users/<string:username>')
+@users.route('/users/<string:username>/products')
 def user_products(username):
     PER_PAGE = 8
     page = request.args.get('page', 1, type=int)
@@ -126,6 +126,38 @@ def user_products(username):
         total_pages=total_pages,
         pagination_list=pagination_list,
         total_products=total_products
+    )
+
+@users.route('/users/<string:username>/comments')
+@login_required
+def user_comments(username):
+    PER_PAGE = 8
+    page = request.args.get('page', 1, type=int)
+
+    repo = UserRepository(db)
+    user = repo.get_user_by_username(username)
+
+    if user is None:
+        abort(404)
+        
+    offset = (page - 1) * PER_PAGE
+
+    repo = CommentRepository(db)
+    comments = repo.get_comment_by_user_id(user.id, limit=PER_PAGE, offset=offset)
+    total_comments = repo.count_comments_by_user_id(user.id)
+
+    total_pages = math.ceil(total_comments / PER_PAGE)
+
+    pagination_list = get_pagination_list(page, total_pages)
+
+    return render_template(
+        'user_comments.html',
+        user=user,
+        comments=comments,
+        page=page,
+        total_pages=total_pages,
+        pagination_list=pagination_list,
+        total_comments=total_comments
     )
 
 @users.route('/reset_password', methods=['GET', 'POST'])
